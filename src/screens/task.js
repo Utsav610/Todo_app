@@ -9,16 +9,17 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomButton from '../components/customButton';
 import colors from '../contants/colors';
-import {useDispatch, useSelector} from 'react-redux';
-import {setTaskID, setTasks} from '../redux/action';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTaskID, setTasks } from '../redux/action';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-export default function Task({navigation}) {
-  const {tasks, taskID} = useSelector(state => state.taskReducer);
+export default function Task({ navigation }) {
+  const { tasks, taskID } = useSelector(state => state.taskReducer);
 
   const dispatch = useDispatch();
   const [title, setTitle] = useState('');
@@ -42,7 +43,7 @@ export default function Task({navigation}) {
 
   const getTask = () => {
     const Task = tasks.find(task => task.ID === taskID);
-    console.log('task',Task);
+    console.log('task', Task);
     if (Task) {
       setTitle(Task.Title);
       setDes(Task.Desc);
@@ -61,7 +62,7 @@ export default function Task({navigation}) {
           Title: title,
           Desc: des,
           Subtasks: subtasks,
-          Completed:completed
+          Completed: completed
         };
         const index = tasks.findIndex(task => task.ID === taskID);
         let newTasks = [];
@@ -86,77 +87,79 @@ export default function Task({navigation}) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{flex: 1, justifyContent: 'space-between'}}>
-        <View>
-          <Text style={{marginVertical: 5}}>Title</Text>
-          <TextInput
-            value={title}
-            style={styles.input}
-            placeholder="eg. Task a Coffee"
-            onChangeText={value => {
-              setTitle(value);
-            }}
-          />
-          <Text style={{marginVertical: 5}}>Description</Text>
-          <TextInput
-            value={des}
-            style={[styles.input, styles.multiLineInput]}
-            placeholder="eg. Task a Coffee"
-            multiline
-            onChangeText={value => {
-              setDes(value);
-            }}
-          />
+    <KeyboardAwareScrollView contentContainerStyle={styles.scrollViewContent}>
+      <SafeAreaView style={styles.container}>
+        <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <View>
-            <Text style={{marginVertical: 5}}>SubTasks</Text>
-            {subtasks.map((subtask, index) => (
-              <View key={index} style={styles.subtaskContainer}>
-                <TextInput
-                  value={subtask}
-                  style={styles.subtaskInput}
-                  placeholder="Enter Subtask"
-                  onChangeText={value => {
-                    const updatedSubtasks = [...subtasks];
-                    updatedSubtasks[index] = value;
-                    setSubtasks(updatedSubtasks);
-                  }}
-                />
-                <TouchableOpacity onPress={() => removeSubtask(index)}>
-                  <Icon name={'delete'} color={colors.redColor} size={25} />
-                </TouchableOpacity>
-              </View>
-            ))}
+            <Text style={{ marginVertical: 5 }}>Title</Text>
+            <TextInput
+              value={title}
+              style={styles.input}
+              placeholder="eg. Task a Coffee"
+              onChangeText={value => {
+                setTitle(value);
+              }}
+            />
+            <Text style={{ marginVertical: 5 }}>Description</Text>
+            <TextInput
+              value={des}
+              style={[styles.input, styles.multiLineInput]}
+              placeholder="eg. Task a Coffee"
+              multiline
+              onChangeText={value => {
+                setDes(value);
+              }}
+            />
+            <View>
+              <Text style={{ marginVertical: 5 }}>SubTasks</Text>
+              {subtasks.map((subtask, index) => (
+                <View key={index} style={styles.subtaskContainer}>
+                  <TextInput
+                    value={subtask}
+                    style={styles.subtaskInput}
+                    placeholder="Enter Subtask"
+                    onChangeText={value => {
+                      const updatedSubtasks = [...subtasks];
+                      updatedSubtasks[index] = value;
+                      setSubtasks(updatedSubtasks);
+                    }}
+                  />
+                  <TouchableOpacity onPress={() => removeSubtask(index)}>
+                    <Icon name={'delete'} color={colors.redColor} size={25} />
+                  </TouchableOpacity>
+                </View>
+              ))}
 
-            <CustomButton
-              title="Add Subtask"
-              style={{width: '100%'}}
-              color={colors.primaryColor}
-              onPress={addSubtask}
-            />
+              <CustomButton
+                title="Add Subtask"
+                style={{ width: '100%' }}
+                color={colors.primaryColor}
+                onPress={addSubtask}
+              />
+            </View>
+            <TouchableOpacity
+              style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}
+              onPress={() => {
+                setCompleted(!completed);
+
+              }}>
+              <Icon
+                name={completed ? 'checkbox-marked' : 'checkbox-blank-outline'}
+                size={25}
+                color={colors.primaryColor}
+              />
+              <Text>Completed</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-          style={{flexDirection:'row' , alignItems:'center' , alignSelf:'center'}}
-            onPress={() => {
-              setCompleted(!completed);
-              
-            }}>
-            <Icon
-              name={completed ? 'checkbox-marked' : 'checkbox-blank-outline'}
-              size={25}
-              color={colors.primaryColor}
-            />
-            <Text>Completed</Text>
-          </TouchableOpacity>
+          <CustomButton
+            title={taskID ? 'Update Task' : 'Create a New Task'}
+            color={colors.primaryColor}
+            style={{ width: '100%' }}
+            onPress={setTask}
+          />
         </View>
-        <CustomButton
-          title={taskID ? 'Update Task' : 'Create a New Task'} // Conditionally set the button text
-          color={colors.primaryColor}
-          style={{ width: '100%' }}
-          onPress={setTask}
-        />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </KeyboardAwareScrollView>
   );
 }
 
@@ -165,6 +168,9 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     marginHorizontal: 12,
+  },
+  scrollViewContent: {
+    flexGrow: 1
   },
   input: {
     width: '100%',
@@ -195,3 +201,4 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 });
+
