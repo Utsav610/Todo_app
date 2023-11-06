@@ -1,9 +1,9 @@
-import {StyleSheet, Text, View, SafeAreaView} from 'react-native';
-import React, {useEffect} from 'react';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import React, { useEffect } from 'react';
 import colors from '../contants/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Splash({navigation}) {
+export default function Splash({ navigation }) {
   useEffect(() => {
     const checkAccessToken = async () => {
       try {
@@ -21,7 +21,7 @@ export default function Splash({navigation}) {
 
     const timeout = setTimeout(() => {
       checkAccessToken();
-    }, 1000);
+    }, 1500);
 
     return () => {
       clearTimeout(timeout);
@@ -31,7 +31,7 @@ export default function Splash({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Todo List</Text>
+      <Text style={styles.text}>Todo List</Text>
     </SafeAreaView>
   );
 }
@@ -43,4 +43,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  text: {
+    fontSize: 35,
+    color: colors.whiteColor,
+    fontWeight: '600'
+  }
 });
+
