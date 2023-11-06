@@ -14,6 +14,7 @@ export default function Profile({navigation}) {
   const handleLogout = async () => {
     console.log('Logout clicked');
     await AsyncStorage.removeItem('accessToken');
+    AsyncStorage.removeItem('Tasks');
 
     navigation.navigate('Login');
   };
