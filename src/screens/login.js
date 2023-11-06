@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,22 +8,24 @@ import {
   SafeAreaView,
 } from 'react-native';
 import axios from 'axios';
-import {useForm, Controller} from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
-import {yupResolver} from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import CustomButton from '../components/customButton';
+import colors from '../contants/colors';
 
 const schema = yup.object().shape({
   email: yup.string().email('Invalid email').required('Email is required'),
   password: yup.string().required('Password is required'),
 });
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -47,7 +49,7 @@ const Login = ({navigation}) => {
       );
 
       if (response) {
-        const {access_token, refresh_token} = response.data;
+        const { access_token, refresh_token } = response.data;
 
         AsyncStorage.setItem('accessToken', access_token);
         AsyncStorage.setItem('refreshToken', refresh_token);
@@ -63,7 +65,7 @@ const Login = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <Controller
         control={control}
-        render={({field: {onChange, value}}) => (
+        render={({ field: { onChange, value } }) => (
           <>
             <Text style={styles.label}>Email:</Text>
             <TextInput
@@ -81,7 +83,7 @@ const Login = ({navigation}) => {
 
       <Controller
         control={control}
-        render={({field: {onChange, value}}) => (
+        render={({ field: { onChange, value } }) => (
           <>
             <Text style={styles.label}>Password:</Text>
             <View style={styles.passwordInputContainer}>
@@ -105,7 +107,12 @@ const Login = ({navigation}) => {
         defaultValue=""
       />
 
-      <Button title="Login" onPress={handleSubmit(onSubmit)} />
+      <CustomButton
+        title="Login"
+        style={{ width: '90%' }}
+        color={colors.primaryColor}
+        onPress={handleSubmit(onSubmit)}
+      />
     </SafeAreaView>
   );
 };

@@ -10,13 +10,16 @@ import {
 import colors from '../contants/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Profile({navigation}) {
+export default function Profile({ navigation }) {
   const handleLogout = async () => {
-    console.log('Logout clicked');
-    await AsyncStorage.removeItem('accessToken');
-    AsyncStorage.removeItem('Tasks');
+    try {
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('Tasks');
+      navigation.navigate('Login');
+    } catch (error) {
 
-    navigation.navigate('Login');
+      console.error('Error while removing items:', error);
+    }
   };
 
   return (
